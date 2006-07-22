@@ -41,7 +41,7 @@ struct SWITCH__D_A_T_A
   };
 
 
-#define SWITCH(arg) do{SWITCH__D_A_T_A switch__d_a_t_a; \
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
  switch__d_a_t_a.strPtrThrSw=arg;switch__d_a_t_a.bEnterDefault=true;if(switch__d_a_t_a.cmp(
 
 #define CASE(cnst)  cnst,true)){
@@ -52,7 +52,7 @@ struct SWITCH__D_A_T_A
 
 #define DEFAULT     NULL,false)){
 
-#define END         }}while(0);
+#define END         }};
 
 
 #endif // __cplusplus
