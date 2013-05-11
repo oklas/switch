@@ -2,22 +2,24 @@
 
 #ifdef __cplusplus
 
+template<class T>
 struct SWITCH__D_A_T_A
   {
   bool bEnterFall;
   bool bEnterDefault;
-  const char* strPtrThrSw;
-  inline bool cmp(const char*cnst, bool ndeflt)
+  T strPtrThrSw;
+  SWITCH__D_A_T_A( T arg ) : strPtrThrSw(arg) {}
+  inline bool cmp(T cnst, bool ndeflt)
     {
       if(ndeflt)
         {
-          bEnterFall=!strcmp(strPtrThrSw,cnst);
+          bEnterFall = strPtrThrSw == cnst; // !strcmp(strPtrThrSw,cnst);
           if(bEnterFall) bEnterDefault=false;
         }
       return ndeflt ? bEnterFall:
              bEnterDefault;
     }
-  inline bool fall(const char* cnst, bool ndeflt)
+  inline bool fall(T cnst, bool ndeflt)
     {
       if(bEnterFall)
         {
@@ -27,7 +29,7 @@ struct SWITCH__D_A_T_A
         {
           if(ndeflt)
             {
-	          bEnterFall=!strcmp(strPtrThrSw,cnst);
+	          bEnterFall = strPtrThrSw == cnst; // !strcmp(strPtrThrSw,cnst);
               if(bEnterFall) bEnterDefault=false;
               return bEnterFall;
             }
@@ -37,8 +39,8 @@ struct SWITCH__D_A_T_A
 	}
   };
 
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
- switch__d_a_t_a.strPtrThrSw=arg;switch__d_a_t_a.bEnterDefault=true;if(switch__d_a_t_a.cmp(
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
+ switch__d_a_t_a.bEnterDefault=true;if(switch__d_a_t_a.cmp(
 
 #define CASE(cnst)  cnst,true)){
 
