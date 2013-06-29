@@ -9,7 +9,7 @@ struct SWITCH__D_A_T_A
   bool bEnterDefault;
   T strPtrThrSw;
   SWITCH__D_A_T_A( T arg ) : strPtrThrSw(arg) {}
-  inline bool cmp(T cnst, bool ndeflt)
+  inline bool cmp(const T& cnst, bool ndeflt)
     {
       if(ndeflt)
         {
@@ -19,7 +19,7 @@ struct SWITCH__D_A_T_A
       return ndeflt ? bEnterFall:
              bEnterDefault;
     }
-  inline bool fall(T cnst, bool ndeflt)
+  inline bool fall(const T& cnst, bool ndeflt)
     {
       if(bEnterFall)
         {
@@ -39,8 +39,14 @@ struct SWITCH__D_A_T_A
 	}
   };
 
+
+#if __cpluplus > 199711
 #define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
  switch__d_a_t_a.bEnterDefault=true;if(switch__d_a_t_a.cmp(
+#else
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
+ switch__d_a_t_a.bEnterDefault=true;if(switch__d_a_t_a.cmp(
+#endif
 
 #define CASE(cnst)  cnst,true)){
 
@@ -48,7 +54,7 @@ struct SWITCH__D_A_T_A
 
 #define FALL        }if(switch__d_a_t_a.fall(
 
-#define DEFAULT     NULL,false)){
+#define DEFAULT     switch__d_a_t_a.strPtrThrSw,false)){
 
 #define END         }};
 
@@ -75,7 +81,7 @@ typedef struct tagSWITCH__D_A_T_A
 
 #define FALL        }if(SWITCH__D_A_T_A_fall(&switch__d_a_t_a,
 
-#define DEFAULT     NULL,0)){
+#define DEFAULT     switch__d_a_t_a.strPtrThrSw,0)){
 
 #define END         }};
 

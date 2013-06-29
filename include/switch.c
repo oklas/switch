@@ -1,7 +1,7 @@
 // this file need only for C using
 // it NOT needed for C++ using object switch
 
-#include "strswitch.h"
+#include "switch.h"
 
   int SWITCH__D_A_T_A_cmp(SWITCH__D_A_T_A* data, const char*cnst, int ndeflt)
     {
