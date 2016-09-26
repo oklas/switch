@@ -1,3 +1,11 @@
+//! @file
+//! @author Serguei Okladnikov
+//! @date 2006.07.04
+
+
+#ifndef __SWITCH__H__
+#define __SWITCH__H__
+
 #include <string.h>
 
 #ifdef __cplusplus
@@ -87,3 +95,5 @@ typedef struct tagSWITCH__D_A_T_A
 
 
 #endif // defined __cplusplus / not defined __cplusplus
+
+#endif // __SWITCH__H__

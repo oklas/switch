@@ -1,3 +1,7 @@
+//! @file
+//! @author Serguei Okladnikov
+//! @date 2009.04.29
+
 // this file need only for C using
 // it NOT needed for C++ using object switch
 
