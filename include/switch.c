@@ -7,32 +7,26 @@
 
 #include "switch.h"
 
-  int SWITCH__D_A_T_A_cmp(SWITCH__D_A_T_A* data, const char*cnst, int ndeflt)
-    {
-      if(ndeflt)
-        {
-          data->bEnterFall=!strcmp(data->strPtrThrSw,cnst);
-          if(data->bEnterFall) data->bEnterDefault=0;
-        }
-      return ndeflt ?
-			data->bEnterFall :
-			data->bEnterDefault;
-    }
-  int SWITCH__D_A_T_A_fall(SWITCH__D_A_T_A* data, const char* cnst, int ndeflt)
-    {
-      if(data->bEnterFall)
-        {
-          return 1;
-        }
-      else
-        {
-          if(ndeflt)
-            {
-	          data->bEnterFall=!strcmp(data->strPtrThrSw,cnst);
-              if(data->bEnterFall) data->bEnterDefault=0;
-              return data->bEnterFall;
-            }
-          else
-            return data->bEnterDefault;
-        }
-    }
+int SWITCH__D_A_T_A_transition(
+  SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt) {
+
+  if(data->bDone)
+    return 0;
+
+  if(fall && data->bEnterFall)
+    return 1;
+
+  if(!fall && data->bEnterFall) {
+    data->bDone = 1;
+    return 0;
+  }
+
+  if(ndeflt) {
+    data->bEnterFall=!strcmp(data->strPtrThrSw,cnst);
+    if(data->bEnterFall) data->bEnterDefault=0;
+  }
+
+  return ndeflt ?
+    data->bEnterFall :
+    data->bEnterDefault;
+}
