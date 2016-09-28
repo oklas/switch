@@ -54,13 +54,13 @@ struct SWITCH__D_A_T_A {
 #define CASE(cnst)  cnst,true)){
 
 #define BREAK       switch__d_a_t_a.bDone=true; \
-                    } if(switch__d_a_t_a.transition(false,
+                    ;} if(switch__d_a_t_a.transition(false,
 
-#define FALL        } if(switch__d_a_t_a.transition(true,
+#define FALL        ;} if(switch__d_a_t_a.transition(true,
 
 #define DEFAULT     switch__d_a_t_a.strPtrThrSw,false)){
 
-#define END         }};
+#define END         ;}};
 
 
 #else // not defined __cplusplus
@@ -111,13 +111,13 @@ int SWITCH__D_A_T_A_transition(
 #define CASE(cnst)  cnst,1)){
 
 #define BREAK       switch__d_a_t_a.bDone=1; \
-                    } if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
+                    ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
 
-#define FALL        } if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1,
+#define FALL        ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1,
 
 #define DEFAULT     switch__d_a_t_a.strPtrThrSw,0)){
 
-#define END         }};
+#define END         ;}};
 
 
 #endif // defined __cplusplus / not defined __cplusplus
