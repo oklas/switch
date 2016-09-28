@@ -1,5 +1,5 @@
 //! @file
-//! @author Serguei Okladnikov
+//! @author Serguei Okladnikov oklaspec@gmail.com
 //! @date 2006.07.04
 
 
@@ -73,8 +73,33 @@ typedef struct tagSWITCH__D_A_T_A
   const char* strPtrThrSw;
   } SWITCH__D_A_T_A;
 
-  int SWITCH__D_A_T_A_transition(
-    SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt);
+
+#ifdef SWITCH_IMPL
+inline
+int SWITCH__D_A_T_A_transition(
+  SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt) {
+
+  if(data->bDone)
+    return 0;
+
+  if(fall && data->bEnterFall)
+    return 1;
+
+  if(!fall && data->bEnterFall) {
+    data->bDone = 1;
+    return 0;
+  }
+
+  if(ndeflt) {
+    data->bEnterFall=!strcmp(data->strPtrThrSw,cnst);
+    if(data->bEnterFall) data->bEnterDefault=0;
+  }
+
+  return ndeflt ?
+    data->bEnterFall :
+    data->bEnterDefault;
+}
+#endif // SWITCH_IMPL
 
 #define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
  switch__d_a_t_a.strPtrThrSw=arg; \
