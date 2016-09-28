@@ -1,0 +1,5 @@
+//! @file
+//! @author Serguei Okladnikov oklaspec@gmail.com
+//! @date 2006.07.04
+
+#include "switch.h"

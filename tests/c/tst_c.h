@@ -1,9 +1,4 @@
-
 #include <QObject>
-#include <QPair>
-#include <QString>
-#include <QtTest/QtTest>
-
 
 class C: public QObject
 {

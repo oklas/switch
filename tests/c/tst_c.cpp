@@ -1,5 +1,10 @@
-#include "tst_c.h"
+#include <QString>
+#include <QtTest/QtTest>
+
 #include "tst_c_check.h"
+#include "tst_c_extlink.h"
+
+#include "tst_c.h"
 
 
 void C::test_string() {
@@ -14,6 +19,11 @@ void C::test_string() {
   QCOMPARE( QString("SUBvalval"),  QString( check("SUB","DOUBLE","val") ) );
   QCOMPARE( QString("SUBdefault"), QString( check("SUB","DEFAULTFALL","val") ) );
   QCOMPARE( QString("SUBdefault"), QString( check("SUB","DEFAULT","val") ) );
+
+  QCOMPARE( QString("val"),
+    QString( check_multiple_external_link("SAMEFALL","","val") ) );
+  QCOMPARE( QString("val"),
+    QString( check_multiple_external_link("SAME","","val") ) );
 }
 
 

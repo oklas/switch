@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#define SWITCH_IMPL_HERE
-#include "switch.c"
+#define SWITCH_IMPL
+#include "switch.h"
 
 char g_result[512];
 
