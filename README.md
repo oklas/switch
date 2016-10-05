@@ -13,11 +13,16 @@ Although the Qt project file exists here but it is only for tests.
 You do not need Qt in your system for build and use this in project.
 
 
-Using with C++
---------------
+Using
+-----
 
 Configure your build environment with adding path of this package `include`
 dir to the list of directories to be searched for header files.
+Or you can simple copy `include` folder files to your project tree.
+
+
+Using with C++
+--------------
 
     #include <switch>
 
