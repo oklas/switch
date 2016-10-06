@@ -1,30 +1,32 @@
+#define SWITCH_QUICK
 #include "switch"
 
-#include "tst_cpp.h"
+#include "tst_cpp11.h"
 
 QString Cpp::check( QString top, QString sub, QString val ) {
+  QString res;
   SWITCH(top)
     CASE("SAMEFALL") FALL
-    CASE("SAME")     return val;     BREAK
+    CASE("SAME")     res = val;     BREAK
     CASE("SUBFALL")  FALL
     CASE("SUB")
       SWITCH(sub)
       CASE("SAMEFALL")    FALL
-      CASE("SAME")        return QString("SUB")+val;       BREAK
-      CASE("DOUBLE")      return QString("SUB")+val+val;   BREAK
+      CASE("SAME")        res = QString("SUB")+val;       BREAK
+      CASE("DOUBLE")      res = QString("SUB")+val+val;   BREAK
       CASE("DEFAULTFALL") FALL
-      DEFAULT             return QString("SUB")+"default";
+      DEFAULT             res = QString("SUB")+"default";
       END
     BREAK
-    CASE("DOUBLE")      return val+val; BREAK
+    CASE("DOUBLE")      res = val+val; BREAK
     CASE("DEFAULTFALL") FALL
-    DEFAULT             return "default";
+    DEFAULT             res = "default";
   END
-  return "UNREACHEABLE";
+  return res;
 }
 
 void Cpp::test_string() {
-  SWITCH__D_A_T_A<int> is_cpp97std(1); is_cpp97std.cpp97();
+  SWITCH__D_A_T_A<int> is_cpp11std(1); is_cpp11std.cpp11();
 
   QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
   QCOMPARE( QString("val"),       check("SAME","","val") );
@@ -41,17 +43,18 @@ void Cpp::test_string() {
 }
 
 QString Cpp::check( QPair<QString,QString> pair ) {
+  QString res;
   SWITCH(pair)
     CASE(( qMakePair<QString,QString>("a","fall") ))  FALL
-    CASE(( qMakePair<QString,QString>("a","a") ))     return "aa"; BREAK
+    CASE(( qMakePair<QString,QString>("a","a") ))     res = "aa"; BREAK
     CASE(( qMakePair<QString,QString>("fall","b") ))  FALL
-    CASE(( qMakePair<QString,QString>("b","b") ))     return "bb"; BREAK
-    CASE(( qMakePair<QString,QString>("a","b") ))     return "ab"; BREAK
-    CASE(( qMakePair<QString,QString>("b","a") ))     return "ba"; BREAK
+    CASE(( qMakePair<QString,QString>("b","b") ))     res = "bb"; BREAK
+    CASE(( qMakePair<QString,QString>("a","b") ))     res = "ab"; BREAK
+    CASE(( qMakePair<QString,QString>("b","a") ))     res = "ba"; BREAK
     CASE(( qMakePair<QString,QString>("df","fall") )) FALL
-    DEFAULT                                           return "default";
+    DEFAULT                                           res = "default";
   END
-  return "UNREACHEABLE";
+  return res;
 }
 
 void Cpp::test_pair() {

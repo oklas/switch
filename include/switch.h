@@ -44,6 +44,82 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef __cplusplus
 
+#if __cplusplus >= 201103L && defined(SWITCH_QUICK)
+
+#include <vector>
+#include <map>
+#include <functional>
+
+template<class T>
+struct SWITCH__D_A_T_A {
+  typedef std::function<bool()> t_cb;
+  typedef std::map<T,int> t_map;
+  struct Entry {
+    bool fall;
+    t_cb cb;
+  };
+  T& data;
+  t_cb dfcb;
+  bool havedf;
+  std::vector<Entry> entries;
+  t_map map;
+  SWITCH__D_A_T_A( T arg ) : data(arg), havedf(false) {}
+  inline SWITCH__D_A_T_A& transition(bool ndeflt, const T& cnst, t_cb cb, bool fall) {
+    if( !ndeflt ) {
+      dfcb = cb;
+      havedf = true;
+      return *this;
+    }
+    int pos = entries.size();
+    entries.push_back( Entry({fall, cb}) );
+    map[cnst] = pos;
+    return *this;
+  }
+  void doit() {
+    typename t_map::iterator it = map.find(data);
+    if( map.end() == it ) {
+      if( havedf ) dfcb();
+      return;
+    }
+    int pos = it->second;
+    do {
+      Entry& e = entries[pos];
+      bool fall = e.cb();
+      if( !( e.fall && fall ) ) return;
+      ++pos;
+      if( entries.size() == pos ) {
+        if( havedf ) dfcb();
+        return;
+      }
+    } while(true);
+    return;
+  }
+  void cpp11(){};
+};
+
+#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
+  switch__d_a_t_a
+#else
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
+  switch__d_a_t_a
+#endif
+
+#define CASE(cnst)  .transition(true, cnst, [&]()->bool {
+
+#define BREAK       ;return true; }, false)
+
+#define FALL        ;return true; }, true)
+
+#define DEFAULT     .transition(false, switch__d_a_t_a.data, [&]()->bool {
+
+#define END         ;return true; }, false).doit();}
+
+
+
+#else // SWITCH_QUICK
+
+
 template<class T>
 struct SWITCH__D_A_T_A {
   bool bEnterFall;
@@ -72,15 +148,16 @@ struct SWITCH__D_A_T_A {
       bEnterFall :
       bEnterDefault;
   }
+  void cpp97(){};
 };
 
 
-#if __cpluplus > 199711
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
+#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
  switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 #else
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
  switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 #endif
@@ -97,6 +174,9 @@ struct SWITCH__D_A_T_A {
 #define END         ;}};
 
 
+#endif // SWITCH_QUICK
+
+
 #else // not defined __cplusplus
 
 typedef struct tagSWITCH__D_A_T_A
@@ -107,6 +187,9 @@ typedef struct tagSWITCH__D_A_T_A
   const char* strPtrThrSw;
   } SWITCH__D_A_T_A;
 
+
+int SWITCH__D_A_T_A_transition(
+  SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt);
 
 #ifdef SWITCH_IMPL
 inline

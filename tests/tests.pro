@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS = \
           c \
-          cpp
+          cpp \
+          cpp11

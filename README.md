@@ -5,8 +5,11 @@ There are many more effective ways to implement that logic
 which you want to have by using switch. For example map
 value:handler or use laguage switch with hash sum values etc.
 The purpose to use this switch statement is not performance
-but code visibility. Do not use this switch implementation
-if you can use more effective solution.
+but code visibility. The default enabled switch implementation
+is not quick. But it is possible to enable quick map based
+implementaion if you have new generation c++11 or newer compiler.
+Little limitation exists in quick mode - return statement is not
+allowed in case statement.
 
 There is no any dependency required to use this switch implementation.
 Although the Qt project file exists here but it is only for tests.
@@ -65,6 +68,41 @@ write instead:
     CASE( ( std::make_pair(first,second) ) )
 
 
+Quick C++ mode
+--------------
+
+It is possible to enable quick map based implementaion with map
+tree search alorithm if you have new generation c++11 or newer
+compiler. Little limitation exists in quick mode - return statement
+is not allowed in case statement.
+
+To enable quick mode define macro SWITCH_QUICK before include header.
+
+    #define SWITCH_QUICK
+    #include <switch>
+
+This macro will be ignored if you have not c++11 or newer compiler
+and quick implementation will be not enabled. The default mode will
+be enabled instead.
+
+The return statement is not allowed in quick mode.
+Use helper variable instead:
+
+    std::string val = "spring";
+    std::string result;
+
+    SWITCH(val)
+      CASE("winter") result = "cold"; BREAK
+      CASE("summer") result = "heat"; BREAK
+      CASE("spring") FALL
+      CASE("autumn") result = "average"; BREAK
+      DEFAULT result = "not a season";
+    END
+
+    return result;
+
+
+
 Using with C
 ------------
 
@@ -102,23 +140,22 @@ Comparision with language switch statement
 ------------------------------------------
 
 Logic differences:
-  * linear search
+  * linear search (tree search in quick mode)
   * work with any type that support comparisions
   * allow nonconstant case expressions
-  * currently possible to use lang `break` for break upper including loop
 
 Syntax differences:
   * uppercase keywords
   * need parentheses for `CASE` statement
-  * semicolon at end statement is not allowed
-  * colon ':' at `CASE` statement not allowed
+  * semicolon at end of statements is not allowed
+  * colon ':' at `CASE` statement is not allowed
   * need one of `BREAK` or `FALL` keyword at end of `CASE` statement
 
 
 License
 -------
 
-Swtich is available as open source under the terms of the *BSD License*
+Switch is available as open source under the terms of the *BSD License*
 
 Copyright
 ---------
