@@ -1,3 +1,7 @@
+//! @file
+//! @author Serguei Okladnikov oklaspec@gmail.com
+//! @date 2016.09.28
+
 #include <QString>
 #include <QtTest/QtTest>
 

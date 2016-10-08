@@ -1,15 +1,15 @@
-Any data type switch statement for C/C++
+Any type data switch statement for C/C++
 ========================================
 
-There are many more effective ways to implement that logic
-which you want to have by using switch. For example map
-value:handler or use laguage switch with hash sum values etc.
-The purpose to use this switch statement is not performance
-but code visibility. The default enabled switch implementation
-is not quick. But it is possible to enable quick map based
-implementaion if you have new generation c++11 or newer compiler.
-Little limitation exists in quick mode - return statement is not
-allowed in case statement.
+There are many ways to implement that logic which you want to have by using
+`switch`. For example map value:handler or use laguage switch with hash sum
+values etc. But `switch` statement some times is more simple to implement
+and more readable.
+
+The default switch implementation in this package is not quick. But it is
+possible to enable quick map based implementaion if you have new generation
+c++11 or newer compiler. Little limitation exists in quick mode - the
+`return` statement is not allowed.
 
 There is no any dependency required to use this switch implementation.
 Although the Qt project file exists here but it is only for tests.
@@ -27,9 +27,12 @@ Or you can simple copy `include` folder files to your project tree.
 Using with C++
 --------------
 
+Include switch in source file:
+
     #include <switch>
 
-There is no semicolons required after any keywords of this switch.
+There is no colons or semicolons required (not allowed)
+after any keywords of this switch.
 
 Example:
 
@@ -76,14 +79,14 @@ tree search alorithm if you have new generation c++11 or newer
 compiler. Little limitation exists in quick mode - return statement
 is not allowed in case statement.
 
-To enable quick mode define macro SWITCH_QUICK before include header.
+To enable quick mode define macro SWITCH_QUICK before include header:
 
     #define SWITCH_QUICK
     #include <switch>
 
 This macro will be ignored if you have not c++11 or newer compiler
-and quick implementation will be not enabled. The default mode will
-be enabled instead.
+or that fatures is not enabled. The quick implementation will
+not be enabled for that cases. The default mode will be enabled instead.
 
 The return statement is not allowed in quick mode.
 Use helper variable instead:
@@ -106,13 +109,13 @@ Use helper variable instead:
 Using with C
 ------------
 
-The C implementation support only C strings ( were type is char* )
+The C implementation support only C strings ( were type is `char*` )
 
 Include switch in source file
 
     #include <switch.h>
 
-One of your C source fil must define macro `SWITCH_IMPL` befire
+One of your C source fil must define macro `SWITCH_IMPL` before
 include `switch.h`  header file like this:
 
     #define SWITCH_IMPL
@@ -147,7 +150,7 @@ Logic differences:
 Syntax differences:
   * uppercase keywords
   * need parentheses for `CASE` statement
-  * semicolon at end of statements is not allowed
+  * semicolon ';' at end of statements is not allowed
   * colon ':' at `CASE` statement is not allowed
   * need one of `BREAK` or `FALL` keyword at end of `CASE` statement
 

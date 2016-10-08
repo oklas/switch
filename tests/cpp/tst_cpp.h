@@ -1,3 +1,6 @@
+//! @file
+//! @author Serguei Okladnikov oklaspec@gmail.com
+//! @date 2016.09.24
 
 #include <QObject>
 #include <QPair>
