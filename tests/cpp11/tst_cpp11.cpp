@@ -1,19 +1,23 @@
+//! @file
+//! @author Serguei Okladnikov oklaspec@gmail.com
+//! @date 2016.10.04
+
 #define SWITCH_QUICK
 #include "switch"
 
 #include "tst_cpp11.h"
 
-QString Cpp::check( QString top, QString sub, QString val ) {
-  QString res;
+QString Cpp11::check( QString top, QString sub, QString val ) {
+  static QString res;
   SWITCH(top)
     CASE("SAMEFALL") FALL
-    CASE("SAME")     res = val;     BREAK
+    CASE("SAME")     res = val; BREAK
     CASE("SUBFALL")  FALL
     CASE("SUB")
       SWITCH(sub)
       CASE("SAMEFALL")    FALL
-      CASE("SAME")        res = QString("SUB")+val;       BREAK
-      CASE("DOUBLE")      res = QString("SUB")+val+val;   BREAK
+      CASE("SAME")        res = QString("SUB")+val;     BREAK
+      CASE("DOUBLE")      res = QString("SUB")+val+val; BREAK
       CASE("DEFAULTFALL") FALL
       DEFAULT             res = QString("SUB")+"default";
       END
@@ -25,8 +29,8 @@ QString Cpp::check( QString top, QString sub, QString val ) {
   return res;
 }
 
-void Cpp::test_string() {
-  SWITCH__D_A_T_A<int> is_cpp11std(1); is_cpp11std.cpp11();
+void Cpp11::test_string() {
+  SWITCH__D_A_T_A<int> is_cpp11std; is_cpp11std.cpp11();
 
   QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
   QCOMPARE( QString("val"),       check("SAME","","val") );
@@ -42,7 +46,50 @@ void Cpp::test_string() {
   QCOMPARE( QString("SUBdefault"), check("SUB","DEFAULT","val") );
 }
 
-QString Cpp::check( QPair<QString,QString> pair ) {
+QString Cpp11::check_static( QString top, QString arg_sub, QString arg_val ) {
+  static QString res;
+  static QString sub;
+  static QString val;
+  sub = arg_sub;
+  val = arg_val;
+  SWITCH_STATIC(top)
+    CASE("SAMEFALL") FALL
+    CASE("SAME")     res = val; BREAK
+    CASE("SUBFALL")  FALL
+    CASE("SUB")
+      SWITCH(sub)
+      CASE("SAMEFALL")    FALL
+      CASE("SAME")        res = QString("SUB")+val;     BREAK
+      CASE("DOUBLE")      res = QString("SUB")+val+val; BREAK
+      CASE("DEFAULTFALL") FALL
+      DEFAULT             res = QString("SUB")+"default";
+      END
+    BREAK
+    CASE("DOUBLE")      res = val+val; BREAK
+    CASE("DEFAULTFALL") FALL
+    DEFAULT             res = "default";
+  END
+  return res;
+}
+
+void Cpp11::test_static() {
+  SWITCH__D_A_T_A<int> is_cpp11std; is_cpp11std.cpp11();
+
+  QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
+  QCOMPARE( QString("val"),       check("SAME","","val") );
+  QCOMPARE( QString("valval"),    check("DOUBLE" ,"","val") );
+  QCOMPARE( QString("default"),   check("DEFAULTFALL","","val") );
+  QCOMPARE( QString("default"),   check("DEFAULT","","val") );
+
+  QCOMPARE( QString("SUBval"),     check("SUBFALL","SAME","val") );
+  QCOMPARE( QString("SUBval"),     check("SUB","SAMEFALL","val") );
+  QCOMPARE( QString("SUBval"),     check("SUB","SAME","val") );
+  QCOMPARE( QString("SUBvalval"),  check("SUB","DOUBLE","val") );
+  QCOMPARE( QString("SUBdefault"), check("SUB","DEFAULTFALL","val") );
+  QCOMPARE( QString("SUBdefault"), check("SUB","DEFAULT","val") );
+}
+
+QString Cpp11::check( QPair<QString,QString> pair ) {
   QString res;
   SWITCH(pair)
     CASE(( qMakePair<QString,QString>("a","fall") ))  FALL
@@ -57,7 +104,7 @@ QString Cpp::check( QPair<QString,QString> pair ) {
   return res;
 }
 
-void Cpp::test_pair() {
+void Cpp11::test_pair() {
   QCOMPARE( QString("aa"),      check( qMakePair<QString,QString>("a","fall") ) );
   QCOMPARE( QString("aa"),      check( qMakePair<QString,QString>("a","a") ) );
   QCOMPARE( QString("bb"),      check( qMakePair<QString,QString>("fall","b") ) );
@@ -69,4 +116,4 @@ void Cpp::test_pair() {
 }
 
 
-QTEST_MAIN(Cpp)
+QTEST_MAIN(Cpp11)

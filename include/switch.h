@@ -44,6 +44,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef __cplusplus
 
+#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
+#define SWITCH_DECLTYPE decltype
+#else
+#define SWITCH_DECLTYPE typeof
+#endif
+
 #if __cplusplus >= 201103L && defined(SWITCH_QUICK)
 
 #include <vector>
@@ -58,12 +64,21 @@ struct SWITCH__D_A_T_A {
     bool fall;
     t_cb cb;
   };
-  T& data;
+  const T* data;
   t_cb dfcb;
   bool havedf;
+  bool initialized;
   std::vector<Entry> entries;
   t_map map;
-  SWITCH__D_A_T_A( T arg ) : data(arg), havedf(false) {}
+  SWITCH__D_A_T_A() : havedf(false), initialized(false) {}
+  inline SWITCH__D_A_T_A& base_init( const T& arg ) {
+    data = &arg;
+    return *this;
+  }
+  inline SWITCH__D_A_T_A& initialize_done() {
+    initialized = true;
+    return *this;
+  }
   inline SWITCH__D_A_T_A& transition(bool ndeflt, const T& cnst, t_cb cb, bool fall) {
     if( !ndeflt ) {
       dfcb = cb;
@@ -75,8 +90,9 @@ struct SWITCH__D_A_T_A {
     map[cnst] = pos;
     return *this;
   }
-  void doit() {
-    typename t_map::iterator it = map.find(data);
+  inline void doit() {
+    initialized = true;
+    typename t_map::iterator it = map.find(*data);
     if( map.end() == it ) {
       if( havedf ) dfcb();
       return;
@@ -97,13 +113,15 @@ struct SWITCH__D_A_T_A {
   void cpp11(){};
 };
 
-#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
-  switch__d_a_t_a
-#else
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
-  switch__d_a_t_a
-#endif
+#define SWITCH(arg) SWITCH_DYNAMIC(arg)
+
+#define SWITCH_STATIC(arg) if(1){ \
+  static SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
+  switch__d_a_t_a.base_init(arg); \
+  switch__d_a_t_a.initialized ? switch__d_a_t_a.doit() : switch__d_a_t_a
+#define SWITCH_DYNAMIC(arg) if(1){ \
+  SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
+  switch__d_a_t_a.base_init(arg)
 
 #define CASE(cnst)  .transition(true, cnst, [&]()->bool {
 
@@ -111,9 +129,9 @@ struct SWITCH__D_A_T_A {
 
 #define FALL        ;return true; }, true)
 
-#define DEFAULT     .transition(false, switch__d_a_t_a.data, [&]()->bool {
+#define DEFAULT     .transition(false, *switch__d_a_t_a.data, [&]()->bool {
 
-#define END         ;return true; }, false).doit();}
+#define END         ;return true; }, false).initialize_done().doit();}
 
 
 
@@ -153,11 +171,11 @@ struct SWITCH__D_A_T_A {
 
 
 #if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< decltype(arg) > switch__d_a_t_a(arg); \
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a(arg); \
  switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 #else
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< typeof(arg) > switch__d_a_t_a(arg); \
+#define SWITCH(arg) if(1){SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a(arg); \
  switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 #endif
