@@ -44,11 +44,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifdef __cplusplus
 
+
 #if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
 #define SWITCH_DECLTYPE decltype
 #else
 #define SWITCH_DECLTYPE typeof
 #endif
+
+
+#ifdef SWITCH_QUICK_DYNAMIC
+#define SWITCH_QUICK
+#define SWITCH_DYNAMIC
+#endif
+
 
 #if __cplusplus >= 201103L && defined(SWITCH_QUICK)
 
@@ -56,71 +64,174 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <map>
 #include <functional>
 
+
+namespace switch_data {
+
+
 template<class T>
-struct SWITCH__D_A_T_A {
+struct SwitchData {
   typedef std::function<bool()> t_cb;
-  typedef std::map<T,int> t_map;
+
   struct Entry {
     bool fall;
     t_cb cb;
   };
+
+  typedef std::map<T,int> t_map;
+  typedef std::vector<Entry> t_entries;
+  typedef T t_value;
+
   const T* data;
-  t_cb dfcb;
-  bool havedf;
+  t_cb default_cb;
+  bool have_default_cb;
   bool initialized;
-  std::vector<Entry> entries;
+  t_entries entries;
   t_map map;
-  SWITCH__D_A_T_A() : havedf(false), initialized(false) {}
-  inline SWITCH__D_A_T_A& base_init( const T& arg ) {
+  int last_pos;
+
+
+  virtual ~SwitchData() {}
+
+  SwitchData() :
+    have_default_cb(false), initialized(false), last_pos(0) {}
+
+
+  inline SwitchData<T>& base_init( const T& arg ) {
     data = &arg;
+    last_pos = 0;
     return *this;
   }
-  inline SWITCH__D_A_T_A& initialize_done() {
+
+
+  inline SwitchData<T>& initialization_done() {
     initialized = true;
     return *this;
   }
-  inline SWITCH__D_A_T_A& transition(bool ndeflt, const T& cnst, t_cb cb, bool fall) {
+
+
+  inline SwitchData<T>& initial_transition(
+    bool ndeflt, const T& cnst, t_cb cb, bool fall
+  ) {
     if( !ndeflt ) {
-      dfcb = cb;
-      havedf = true;
+      default_cb = cb;
+      have_default_cb = true;
       return *this;
     }
     int pos = entries.size();
-    entries.push_back( Entry({fall, cb}) );
+    entries.push_back( {fall, cb} );
     map[cnst] = pos;
     return *this;
   }
-  inline void doit() {
-    initialized = true;
+
+
+  virtual SwitchData<T>& transition(
+    bool ndeflt, const T& cnst, t_cb cb, bool fall
+  ) {
+    initial_transition( ndeflt, cnst, cb, fall );
+    return *this;
+  }
+
+
+  virtual void doit() {
+    initialization_done();
+
     typename t_map::iterator it = map.find(*data);
     if( map.end() == it ) {
-      if( havedf ) dfcb();
+      if( have_default_cb ) default_cb();
       return;
     }
+
     int pos = it->second;
+
     do {
+
       Entry& e = entries[pos];
       bool fall = e.cb();
       if( !( e.fall && fall ) ) return;
+
       ++pos;
+
       if( entries.size() == pos ) {
-        if( havedf ) dfcb();
+        if( have_default_cb ) default_cb();
         return;
       }
+
     } while(true);
+
     return;
   }
+
+
   void cpp11(){};
 };
 
+
+template<class T>
+struct SwitchDataInitial : public SwitchData<T> {
+  using typename SwitchData<T>::t_cb;
+
+  SwitchData<T>& self;
+
+  SwitchDataInitial( SwitchData<T>& self ) :
+    SwitchData<T>(), self(self) {}
+
+  virtual SwitchData<T>& transition(
+    bool ndeflt, const T& cnst, t_cb cb, bool fall
+  ) {
+    self.initial_transition( ndeflt, cnst, cb, fall );
+    return *this;
+  }
+
+  virtual void doit(){ self.doit(); }
+};
+
+
+template<class T>
+struct SwitchDataNext : public SwitchData<T> {
+  using typename SwitchData<T>::t_cb;
+  using SwitchData<T>::default_cb;
+  using SwitchData<T>::entries;
+  using SwitchData<T>::last_pos;
+
+  virtual SwitchData<T>& transition(
+    bool ndeflt, const T&, t_cb cb, bool
+  ) {
+    if( !ndeflt ) {
+      default_cb = cb;
+      return *this;
+    }
+    entries[ last_pos ].cb = cb;
+    ++last_pos;
+    return *this;
+  }
+};
+
+
+} // namespace switch_data
+
+
+#ifdef SWITCH_DYNAMIC
 #define SWITCH(arg) SWITCH_DYNAMIC(arg)
+#else
+#define SWITCH(arg) SWITCH_STATIC(arg)
+#endif
 
 #define SWITCH_STATIC(arg) if(1){ \
-  static SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
+  static switch_data::SwitchDataNext< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
+  static switch_data::SwitchDataInitial< SWITCH_DECLTYPE(arg) > \
+    switch__d_a_t_a__initial(switch__d_a_t_a); \
   switch__d_a_t_a.base_init(arg); \
-  switch__d_a_t_a.initialized ? switch__d_a_t_a.doit() : switch__d_a_t_a
+  ( switch__d_a_t_a.initialized \
+    ? static_cast< switch_data::SwitchData<SWITCH_DECLTYPE(arg)>& > ( \
+        switch__d_a_t_a \
+      ) \
+    : static_cast< switch_data::SwitchData<SWITCH_DECLTYPE(arg)>& > ( \
+        switch__d_a_t_a__initial \
+      ) \
+  )
+
 #define SWITCH_DYNAMIC(arg) if(1){ \
-  SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
+  switch_data::SwitchData< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
   switch__d_a_t_a.base_init(arg)
 
 #define CASE(cnst)  .transition(true, cnst, [&]()->bool {
@@ -131,20 +242,24 @@ struct SWITCH__D_A_T_A {
 
 #define DEFAULT     .transition(false, *switch__d_a_t_a.data, [&]()->bool {
 
-#define END         ;return true; }, false).initialize_done().doit();}
+#define END         ;return true; }, false).doit();}
 
 
 
 #else // SWITCH_QUICK
 
 
+namespace switch_data {
+
+
 template<class T>
-struct SWITCH__D_A_T_A {
+struct SwitchData {
   bool bEnterFall;
   bool bEnterDefault;
   bool bDone;
   T strPtrThrSw;
-  SWITCH__D_A_T_A( T arg ) : strPtrThrSw(arg) {}
+  SwitchData( T arg ) : strPtrThrSw(arg) {}
+
   inline bool transition(bool fall, const T& cnst, bool ndeflt) {
     if(bDone)
        return false;
@@ -166,19 +281,18 @@ struct SWITCH__D_A_T_A {
       bEnterFall :
       bEnterDefault;
   }
+
   void cpp97(){};
 };
 
 
-#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a(arg); \
- switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
- switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
-#else
-#define SWITCH(arg) if(1){SWITCH__D_A_T_A< SWITCH_DECLTYPE(arg) > switch__d_a_t_a(arg); \
- switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
- switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
-#endif
+} // namespace switch_data
+
+
+#define SWITCH(arg) if(1){switch_data::SwitchData< SWITCH_DECLTYPE(arg) > \
+    switch__d_a_t_a(arg); \
+  switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
+  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 
 #define CASE(cnst)  cnst,true)){
 
@@ -197,6 +311,7 @@ struct SWITCH__D_A_T_A {
 
 #else // not defined __cplusplus
 
+
 typedef struct tagSWITCH__D_A_T_A
   {
   int bEnterFall : 1;
@@ -208,6 +323,7 @@ typedef struct tagSWITCH__D_A_T_A
 
 int SWITCH__D_A_T_A_transition(
   SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt);
+
 
 #ifdef SWITCH_IMPL
 inline
@@ -235,6 +351,7 @@ int SWITCH__D_A_T_A_transition(
     data->bEnterDefault;
 }
 #endif // SWITCH_IMPL
+
 
 #define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
  switch__d_a_t_a.strPtrThrSw=arg; \

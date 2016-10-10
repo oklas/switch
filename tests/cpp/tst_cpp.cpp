@@ -28,7 +28,7 @@ QString Cpp::check( QString top, QString sub, QString val ) {
 }
 
 void Cpp::test_string() {
-  SWITCH__D_A_T_A<int> is_cpp97std(1); is_cpp97std.cpp97();
+  switch_data::SwitchData<int> is_cpp97std(1); is_cpp97std.cpp97();
 
   QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
   QCOMPARE( QString("val"),       check("SAME","","val") );

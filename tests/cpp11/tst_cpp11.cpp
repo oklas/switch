@@ -9,7 +9,7 @@
 
 QString Cpp11::check( QString top, QString sub, QString val ) {
   static QString res;
-  SWITCH(top)
+  SWITCH_DYNAMIC(top)
     CASE("SAMEFALL") FALL
     CASE("SAME")     res = val; BREAK
     CASE("SUBFALL")  FALL
@@ -30,7 +30,7 @@ QString Cpp11::check( QString top, QString sub, QString val ) {
 }
 
 void Cpp11::test_string() {
-  SWITCH__D_A_T_A<int> is_cpp11std; is_cpp11std.cpp11();
+  switch_data::SwitchData<int> is_cpp11std; is_cpp11std.cpp11();
 
   QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
   QCOMPARE( QString("val"),       check("SAME","","val") );
@@ -46,12 +46,8 @@ void Cpp11::test_string() {
   QCOMPARE( QString("SUBdefault"), check("SUB","DEFAULT","val") );
 }
 
-QString Cpp11::check_static( QString top, QString arg_sub, QString arg_val ) {
+QString Cpp11::check_static( QString top, QString sub, QString val ) {
   static QString res;
-  static QString sub;
-  static QString val;
-  sub = arg_sub;
-  val = arg_val;
   SWITCH_STATIC(top)
     CASE("SAMEFALL") FALL
     CASE("SAME")     res = val; BREAK
@@ -73,7 +69,7 @@ QString Cpp11::check_static( QString top, QString arg_sub, QString arg_val ) {
 }
 
 void Cpp11::test_static() {
-  SWITCH__D_A_T_A<int> is_cpp11std; is_cpp11std.cpp11();
+  switch_data::SwitchData<int> is_cpp11std; is_cpp11std.cpp11();
 
   QCOMPARE( QString("val"),       check("SAMEFALL","","val") );
   QCOMPARE( QString("val"),       check("SAME","","val") );

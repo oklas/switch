@@ -9,21 +9,30 @@ to use.
 The default switch implementation in this package is not quick. But it is
 possible to enable quick map based implementation if you have new generation
 C++11 or newer compiler. Little limitation exists in quick mode - the
-`return` statement is not allowed. The static implementation available for
-more quickness.
+`return` statement is not allowed.
 
 There is no any dependency required to use this switch implementation.
 Although the Qt project file exists here but it is only for tests.
 You do not need Qt in your system for build and use this in project.
 
+Features
+--------
 
-Comparision with language switch statement
-------------------------------------------
+ * any type of data which support comparisions or checking equality
+ * possibility to build cascading nested switch statemens.
+ * possibility to break or fall through case statements
+ * possibility to use non constatnt case expressions
+ * possible to enable quick mode with tree searching
+
+
+Comparison with language switch statement
+-----------------------------------------
 
 Logic differences:
   * linear search (tree search in quick mode, need C++11)
   * work with any type that support comparisions
-  * allow nonconstant case expressions (except static mode)
+  * allow nonconstant case expressions (quick mode does not support
+    non constant expressions by default, but it is possible to enable)
 
 Syntax differences:
   * uppercase keywords
@@ -34,7 +43,7 @@ Syntax differences:
 
 
 Using
------
+=====
 
 Configure your build environment with adding path of this package `include`
 dir to the list of directories to be searched for header files.
@@ -51,6 +60,7 @@ Include switch in source file:
 There is no colons or semicolons required (not allowed)
 after any keywords of this switch.
 
+
 Example:
 
     std::string val = "spring";
@@ -64,6 +74,29 @@ Example:
     END
 
     // the result will be: "average"
+
+
+Cascaded nested switch example:
+
+    std::string country = "Spain";
+    std::string city = "Granada";
+
+    SWITCH_STATIC( country )
+      CASE( "Nicaragua" )
+        SWITCH_STATIC( city )
+          CASE("Granada") FALL
+          CASE("Managua") return "-06:00"; BREAK
+        END
+        BREAK
+      CASE( "Spain" )
+        SWITCH_STATIC( city )
+          CASE("Granada") FALL
+          CASE("Madrid") return "+01:00"; BREAK
+        END
+    END
+
+    // the result will be: "+01:00"
+
 
 Complex object example:
 
@@ -88,21 +121,26 @@ write instead:
     CASE( ( std::make_pair(first,second) ) )
 
 
-Quick C++ mode
---------------
+The quick C++ mode
+------------------
 
 It is possible to enable quick map based implementation with map tree search
 alorithm if you have new generation c++11 or newer compiler. Little limitation
 exists in quick mode - return statement is not allowed in case statement.
 
-To enable quick mode define macro SWITCH_QUICK before include header:
+The quick mode does not support nonconstant expressions by default,
+see `dynamic quick` below how to enable. Formally it is possible to
+specify noncostant expressions and change them, but changed values will
+be ignored and switch will work with values passed at first execution.
+
+To enable quick mode define macro `SWITCH_QUICK` before include header:
 
     #define SWITCH_QUICK
     #include <switch>
 
 This macro will be ignored if you have not c++11 or newer compiler or that 
-fatures is not enabled. The quick implementation will not be enabled for
-that cases. The default mode will be enabled instead.
+features is not enabled. The quick implementation will not be enabled for
+that cases. The default (non quick) mode will be enabled instead.
 
 The return statement is not allowed in quick mode.
 Use helper variable instead:
@@ -120,57 +158,24 @@ Use helper variable instead:
 
     return result;
 
+    // the result will be: "average"
 
-The staic quick C++ mode
---------------------
+The dynamic quick C++ mode
+--------------------------
 
-The `static` mode is most quick and at the same time most limited and
-difficult to use. The `static` implementation is defined only at
-quick mode. To use static mode simple use SWITCH_STATIC instead of
-SWITCH.
+The `dynamic quick` mode allow non constant `CASE` expressions.
+It is not so quick as `quick` mode. To use `dynamic quick` mode 
+simple use `SWITCH_DYNAMIC` instead of `SWITCH`. Another way is enable
+`dynamic quick` by default. Non dynamic mode (`static quick`) mode
+will be available by `SWITCH_STATIC` mode.
+The `dynamic quick` mode build tree structure at every execution. The static
+mode build tree structure once at first execution. 
 
-The quick mode build tree structure at every execution. The static mode
-build tree structure once at first execution. The body of case statements
-is lambda functions which created and capture variables only at first
-execution. Non static local variables captured at first execution likely
-will be garbage or will be at inaccessible memory at next executions.
-So reading or writing at any visible local variables is forbidden at general.
-But it is possible to use if you understand what you do, for example it is
-possible to use smart pointers or suchlike.
-Static variables simple cases helpfull, at code where threads does not used,
-otherwise need to use synchronization.
+To enable `dynamic quick` by default include `switch` header like this:
 
-On the whole limitations:
 
-  * using all visible nonstatic local variables generally forbidden
-  * unchangable case expressions
-  * return statements not allowed
-
-Using quick static switch implementation:
-
-    std::string time_zone( std::string country, std::string arg_city ) {
-
-      // non static variables forbidden for persistent capture
-      static std::string city = arg_city;
-      static std::string result;
-
-      SWITCH_STATIC( country )
-        CASE( "Nicaragua" )
-          SWITCH_STATIC( city )
-            CASE("Granada") FALL
-            CASE("Managua") result = "-06:00"; BREAK
-          END
-          BREAK
-        CASE( "Spain" )
-          SWITCH_STATIC( city )
-            CASE("Granada") FALL
-            CASE("Madrid") result = "+01:00"; BREAK
-          END
-      END
-
-      return result;
-
-    }
+    #define SWITCH_QUICK_DYNAMIC
+    #include <switch>
 
 
 Using with C
