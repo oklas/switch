@@ -151,7 +151,7 @@ struct SwitchData {
 
       ++pos;
 
-      if( entries.size() == pos ) {
+      if( static_cast<int>(entries.size()) == pos ) {
         if( have_default_cb ) default_cb();
         return;
       }
@@ -290,7 +290,7 @@ struct SwitchData {
 
 
 #define SWITCH(arg) if(1){switch_data::SwitchData< SWITCH_DECLTYPE(arg) > \
-    switch__d_a_t_a(arg); \
+  switch__d_a_t_a(arg); \
   switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
   switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 
@@ -354,11 +354,11 @@ int SWITCH__D_A_T_A_transition(
 
 
 #define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
- switch__d_a_t_a.strPtrThrSw=arg; \
- switch__d_a_t_a.bEnterDefault=1; \
- switch__d_a_t_a.bEnterFall=0; \
- switch__d_a_t_a.bDone=0; \
- if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
+  switch__d_a_t_a.strPtrThrSw=arg; \
+  switch__d_a_t_a.bEnterDefault=1; \
+  switch__d_a_t_a.bEnterFall=0; \
+  switch__d_a_t_a.bDone=0; \
+  if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
 
 #define CASE(cnst)  cnst,1)){ switch(0){default
 
