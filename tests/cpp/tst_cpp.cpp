@@ -8,21 +8,21 @@
 
 QString Cpp::check( QString top, QString sub, QString val ) {
   SWITCH(top)
-    CASE("SAMEFALL") FALL
-    CASE("SAME")     return val;     BREAK
-    CASE("SUBFALL")  FALL
-    CASE("SUB")
+    CASE("SAMEFALL"): FALL
+    CASE("SAME"):     return val;     BREAK
+    CASE("SUBFALL"):  FALL
+    CASE("SUB"):
       SWITCH(sub)
-      CASE("SAMEFALL")    FALL
-      CASE("SAME")        return QString("SUB")+val;       BREAK
-      CASE("DOUBLE")      return QString("SUB")+val+val;   BREAK
-      CASE("DEFAULTFALL") FALL
-      DEFAULT             return QString("SUB")+"default";
+      CASE("SAMEFALL"):    FALL
+      CASE("SAME"):        return QString("SUB")+val;       BREAK
+      CASE("DOUBLE"):      return QString("SUB")+val+val;   BREAK
+      CASE("DEFAULTFALL"): FALL
+      DEFAULT:             return QString("SUB")+"default";
       END
     BREAK
-    CASE("DOUBLE")      return val+val; BREAK
-    CASE("DEFAULTFALL") FALL
-    DEFAULT             return "default";
+    CASE("DOUBLE"):      return val+val; BREAK
+    CASE("DEFAULTFALL"): FALL
+    DEFAULT:             return "default";
   END
   return "UNREACHEABLE";
 }
@@ -46,14 +46,14 @@ void Cpp::test_string() {
 
 QString Cpp::check( QPair<QString,QString> pair ) {
   SWITCH(pair)
-    CASE(( qMakePair<QString,QString>("a","fall") ))  FALL
-    CASE(( qMakePair<QString,QString>("a","a") ))     return "aa"; BREAK
-    CASE(( qMakePair<QString,QString>("fall","b") ))  FALL
-    CASE(( qMakePair<QString,QString>("b","b") ))     return "bb"; BREAK
-    CASE(( qMakePair<QString,QString>("a","b") ))     return "ab"; BREAK
-    CASE(( qMakePair<QString,QString>("b","a") ))     return "ba"; BREAK
-    CASE(( qMakePair<QString,QString>("df","fall") )) FALL
-    DEFAULT                                           return "default";
+    CASE(( qMakePair<QString,QString>("a","fall") )):  FALL
+    CASE(( qMakePair<QString,QString>("a","a") )):     return "aa"; BREAK
+    CASE(( qMakePair<QString,QString>("fall","b") )):  FALL
+    CASE(( qMakePair<QString,QString>("b","b") )):     return "bb"; BREAK
+    CASE(( qMakePair<QString,QString>("a","b") )):     return "ab"; BREAK
+    CASE(( qMakePair<QString,QString>("b","a") )):     return "ba"; BREAK
+    CASE(( qMakePair<QString,QString>("df","fall") )): FALL
+    DEFAULT:                                           return "default";
   END
   return "UNREACHEABLE";
 }

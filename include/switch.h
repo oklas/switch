@@ -234,16 +234,16 @@ struct SwitchDataNext : public SwitchData<T> {
   switch_data::SwitchData< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
   switch__d_a_t_a.base_init(arg)
 
-#define CASE(cnst)  .transition(true, cnst, [&]()->bool {
+#define CASE(cnst)  .transition(true, cnst, [&]()->bool { switch(0){default
 
-#define BREAK       ;return true; }, false)
+#define BREAK       ;} return true; }, false)
 
-#define FALL        ;return true; }, true)
+#define FALL        ;} return true; }, true)
 
-#define DEFAULT     .transition(false, *switch__d_a_t_a.data, [&]()->bool {
+#define DEFAULT     .transition(false, *switch__d_a_t_a.data, [&]()->bool { \
+                    switch(0){default
 
-#define END         ;return true; }, false).doit();}
-
+#define END         ;} return true; }, false).doit();}
 
 
 #else // SWITCH_QUICK
@@ -294,16 +294,16 @@ struct SwitchData {
   switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
   switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
 
-#define CASE(cnst)  cnst,true)){
+#define CASE(cnst)  cnst,true)){ switch(0){default
 
 #define BREAK       switch__d_a_t_a.bDone=true; \
-                    ;} if(switch__d_a_t_a.transition(false,
+                    ;} } if(switch__d_a_t_a.transition(false,
 
-#define FALL        ;} if(switch__d_a_t_a.transition(true,
+#define FALL        ;} } if(switch__d_a_t_a.transition(true,
 
-#define DEFAULT     switch__d_a_t_a.strPtrThrSw,false)){
+#define DEFAULT     switch__d_a_t_a.strPtrThrSw,false)){ switch(0){default
 
-#define END         ;}};
+#define END         ;} }};
 
 
 #endif // SWITCH_QUICK
@@ -360,16 +360,16 @@ int SWITCH__D_A_T_A_transition(
  switch__d_a_t_a.bDone=0; \
  if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
 
-#define CASE(cnst)  cnst,1)){
+#define CASE(cnst)  cnst,1)){ switch(0){default
 
-#define BREAK       switch__d_a_t_a.bDone=1; \
+#define BREAK       ;} switch__d_a_t_a.bDone=1; \
                     ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
 
-#define FALL        ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1,
+#define FALL        ;} } if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1,
 
-#define DEFAULT     switch__d_a_t_a.strPtrThrSw,0)){
+#define DEFAULT     switch__d_a_t_a.strPtrThrSw,0)){ switch(0){default
 
-#define END         ;}};
+#define END         ;} }};
 
 
 #endif // defined __cplusplus / not defined __cplusplus

@@ -11,39 +11,39 @@ char g_result[512];
 
 const char* check( const char* top, const char* sub, const char* val ) {
   SWITCH(top)
-    CASE("SAMEFALL")
+    CASE("SAMEFALL"):
       FALL
-    CASE("SAME")
+    CASE("SAME"):
       return val;
       BREAK
-    CASE("SUBFALL")
+    CASE("SUBFALL"):
       FALL
-    CASE("SUB")
+    CASE("SUB"):
       SWITCH(sub)
-      CASE("SAMEFALL")
+      CASE("SAMEFALL"):
         FALL
-      CASE("SAME")
+      CASE("SAME"):
         sprintf(g_result,"SUB%s",val);
         return g_result;
         BREAK
-      CASE("DOUBLE")
+      CASE("DOUBLE"):
         sprintf(g_result,"SUB%s%s",val,val);
         return g_result;
         BREAK
-      CASE("DEFAULTFALL")
+      CASE("DEFAULTFALL"):
         FALL
-      DEFAULT
+      DEFAULT:
         sprintf(g_result,"SUBdefault");
         return g_result;
       END
     BREAK
-    CASE("DOUBLE")
+    CASE("DOUBLE"):
       sprintf(g_result,"%s%s",val,val);
       return g_result;
       BREAK
-    CASE("DEFAULTFALL")
+    CASE("DEFAULTFALL"):
       FALL
-    DEFAULT
+    DEFAULT:
       return "default";
   END
   return "UNREACHEABLE";
