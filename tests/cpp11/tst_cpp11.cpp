@@ -10,22 +10,22 @@
 QString Cpp11::check( QString top, QString sub, QString val ) {
   static QString res;
   SWITCH_DYNAMIC(top)
-    CASE("SAMEFALL"): FALL
-    CASE("SAME"):     res = val; BREAK
-    CASE("SUBFALL"):  FALL
+    CASE("SAMEFALL"): FALL;
+    CASE("SAME"):     res = val; BREAK;
+    CASE("SUBFALL"):  FALL;
     CASE("SUB"):
       SWITCH(sub)
-      CASE("SAMEFALL"):    FALL
-      CASE("SAME"):        res = QString("SUB")+val;     BREAK
-      CASE("DOUBLE"):      res = QString("SUB")+val+val; BREAK
-      CASE("DEFAULTFALL"): FALL
+      CASE("SAMEFALL"):    FALL;
+      CASE("SAME"):        res = QString("SUB")+val;     BREAK;
+      CASE("DOUBLE"):      res = QString("SUB")+val+val; BREAK;
+      CASE("DEFAULTFALL"): FALL;
       DEFAULT:             res = QString("SUB")+"default";
-      END
-    BREAK
-    CASE("DOUBLE"):      res = val+val; BREAK
-    CASE("DEFAULTFALL"): FALL
+      END;
+    BREAK;
+    CASE("DOUBLE"):      res = val+val; BREAK;
+    CASE("DEFAULTFALL"): FALL;
     DEFAULT:             res = "default";
-  END
+  END;
   return res;
 }
 
@@ -49,22 +49,22 @@ void Cpp11::test_string() {
 QString Cpp11::check_static( QString top, QString sub, QString val ) {
   static QString res;
   SWITCH_STATIC(top)
-    CASE("SAMEFALL"): FALL
-    CASE("SAME"):     res = val; BREAK
-    CASE("SUBFALL"):  FALL
+    CASE("SAMEFALL"): FALL;
+    CASE("SAME"):     res = val; BREAK;
+    CASE("SUBFALL"):  FALL;
     CASE("SUB"):
       SWITCH(sub)
-      CASE("SAMEFALL"):    FALL
-      CASE("SAME"):        res = QString("SUB")+val;     BREAK
-      CASE("DOUBLE"):      res = QString("SUB")+val+val; BREAK
-      CASE("DEFAULTFALL"): FALL
+      CASE("SAMEFALL"):    FALL;
+      CASE("SAME"):        res = QString("SUB")+val;     BREAK;
+      CASE("DOUBLE"):      res = QString("SUB")+val+val; BREAK;
+      CASE("DEFAULTFALL"): FALL;
       DEFAULT:             res = QString("SUB")+"default";
-      END
-    BREAK
-    CASE("DOUBLE"):      res = val+val; BREAK
-    CASE("DEFAULTFALL"): FALL
+      END;
+    BREAK;
+    CASE("DOUBLE"):      res = val+val; BREAK;
+    CASE("DEFAULTFALL"): FALL;
     DEFAULT:             res = "default";
-  END
+  END;
   return res;
 }
 
@@ -88,15 +88,15 @@ void Cpp11::test_static() {
 QString Cpp11::check( QPair<QString,QString> pair ) {
   QString res;
   SWITCH(pair)
-    CASE(( qMakePair<QString,QString>("a","fall") )):  FALL
-    CASE(( qMakePair<QString,QString>("a","a") )):     res = "aa"; BREAK
-    CASE(( qMakePair<QString,QString>("fall","b") )):  FALL
-    CASE(( qMakePair<QString,QString>("b","b") )):     res = "bb"; BREAK
-    CASE(( qMakePair<QString,QString>("a","b") )):     res = "ab"; BREAK
-    CASE(( qMakePair<QString,QString>("b","a") )):     res = "ba"; BREAK
-    CASE(( qMakePair<QString,QString>("df","fall") )): FALL
+    CASE(( qMakePair<QString,QString>("a","fall") )):  FALL;
+    CASE(( qMakePair<QString,QString>("a","a") )):     res = "aa"; BREAK;
+    CASE(( qMakePair<QString,QString>("fall","b") )):  FALL;
+    CASE(( qMakePair<QString,QString>("b","b") )):     res = "bb"; BREAK;
+    CASE(( qMakePair<QString,QString>("a","b") )):     res = "ab"; BREAK;
+    CASE(( qMakePair<QString,QString>("b","a") )):     res = "ba"; BREAK;
+    CASE(( qMakePair<QString,QString>("df","fall") )): FALL;
     DEFAULT:                                           res = "default";
-  END
+  END;
   return res;
 }
 

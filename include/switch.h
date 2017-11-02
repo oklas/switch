@@ -161,6 +161,11 @@ struct SwitchData {
     return;
   }
 
+  template<typename A>
+  SwitchData<T>& nop(A) {
+    return *this;
+  }
+
 
   void cpp11(){};
 };
@@ -228,19 +233,19 @@ struct SwitchDataNext : public SwitchData<T> {
     : static_cast< switch_data::SwitchData<SWITCH_DECLTYPE(arg)>& > ( \
         switch__d_a_t_a__initial \
       ) \
-  )
+  ).nop([](){
 
 #define SWITCH_DYNAMIC(arg) if(1){ \
   switch_data::SwitchData< SWITCH_DECLTYPE(arg) > switch__d_a_t_a; \
-  switch__d_a_t_a.base_init(arg)
+  switch__d_a_t_a.base_init(arg).nop([](){
 
-#define CASE(cnst)  .transition(true, cnst, [&]()->bool { switch(0){default
+#define CASE(cnst)  ;return 0;}).transition(true, cnst, [&]()->bool { switch(0){default
 
-#define BREAK       ;} return true; }, false)
+#define BREAK       ;} return true; }, false).nop([](){
 
-#define FALL        ;} return true; }, true)
+#define FALL        ;} return true; }, true).nop([](){
 
-#define DEFAULT     .transition(false, *switch__d_a_t_a.data, [&]()->bool { \
+#define DEFAULT     ;return 0;}).transition(false, *switch__d_a_t_a.data, [&]()->bool { \
                     switch(0){default
 
 #define END         ;} return true; }, false).doit();}
@@ -292,16 +297,17 @@ struct SwitchData {
 #define SWITCH(arg) if(1){switch_data::SwitchData< SWITCH_DECLTYPE(arg) > \
   switch__d_a_t_a(arg); \
   switch__d_a_t_a.bEnterDefault=true;switch__d_a_t_a.bEnterFall=false; \
-  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false,
+  switch__d_a_t_a.bDone=false;if(switch__d_a_t_a.transition(false, \
+  ((char*)(struct{char*s;
 
-#define CASE(cnst)  cnst,true)){ switch(0){default
+#define CASE(cnst)  }*)cnst),true)){ switch(0){default
 
 #define BREAK       switch__d_a_t_a.bDone=true; \
-                    ;} } if(switch__d_a_t_a.transition(false,
+                    ;} } if(switch__d_a_t_a.transition(false,((char*)(struct{char*s
 
-#define FALL        ;} } if(switch__d_a_t_a.transition(true,
+#define FALL        ;} } if(switch__d_a_t_a.transition(true,((char*)(struct{char*s
 
-#define DEFAULT     switch__d_a_t_a.strPtrThrSw,false)){ switch(0){default
+#define DEFAULT     }*)switch__d_a_t_a.strPtrThrSw),false)){ switch(0){default
 
 #define END         ;} }};
 
@@ -354,20 +360,22 @@ int SWITCH__D_A_T_A_transition(
 
 
 #define SWITCH(arg) if(1){SWITCH__D_A_T_A switch__d_a_t_a; \
-  switch__d_a_t_a.strPtrThrSw=arg; \
-  switch__d_a_t_a.bEnterDefault=1; \
-  switch__d_a_t_a.bEnterFall=0; \
-  switch__d_a_t_a.bDone=0; \
-  if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
+ switch__d_a_t_a.strPtrThrSw=arg; \
+ switch__d_a_t_a.bEnterDefault=1; \
+ switch__d_a_t_a.bEnterFall=0; \
+ switch__d_a_t_a.bDone=0; \
+ if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,((char*)(struct{char*s;
 
-#define CASE(cnst)  cnst,1)){ switch(0){default
+#define CASE(cnst)  }*)cnst),1)){ switch(0){default
 
 #define BREAK       ;} switch__d_a_t_a.bDone=1; \
-                    ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,
+                    ;} if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 0,\
+                    ((char*)(struct{char*s
 
-#define FALL        ;} } if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1,
+#define FALL        ;} } if(SWITCH__D_A_T_A_transition(&switch__d_a_t_a, 1, \
+                    ((char*)(struct{char*s
 
-#define DEFAULT     switch__d_a_t_a.strPtrThrSw,0)){ switch(0){default
+#define DEFAULT     }*)switch__d_a_t_a.strPtrThrSw),0)){ switch(0){default
 
 #define END         ;} }};
 
