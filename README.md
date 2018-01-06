@@ -41,6 +41,12 @@ Syntax differences:
   * colon ':' at `CASE` statement is not allowed
   * need one of `BREAK` or `FALL` keyword at end of `CASE` statement
 
+Colon after `CASE` available, see in branch
+[colon](https://github.com/oklas/switch/tree/colon).
+Semicolon seems impossible for some impl, currently worked: `C` and `C++11`,
+but not worked: `C++`. See in branch
+[semicolon](https://github.com/oklas/switch/tree/semicolon).
+
 
 Using
 =====
@@ -55,7 +61,9 @@ Using with C++
 
 Include switch in source file:
 
-    #include <switch>
+``` C++
+#include <switch>
+```
 
 There is no colons or semicolons required (not allowed)
 after any keywords of this switch.
@@ -63,62 +71,72 @@ after any keywords of this switch.
 
 Example:
 
-    std::string val = "spring";
+``` C++
+std::string val = "spring";
 
-    SWITCH(val)
-      CASE("winter") return "cold"; BREAK
-      CASE("summer") return "heat"; BREAK
-      CASE("spring") FALL
-      CASE("autumn") return "average"; BREAK
-      DEFAULT return "not a season";
-    END
+SWITCH(val)
+  CASE("winter") return "cold"; BREAK
+  CASE("summer") return "heat"; BREAK
+  CASE("spring") FALL
+  CASE("autumn") return "average"; BREAK
+  DEFAULT return "not a season";
+END
 
-    // the result will be: "average"
+// the result will be: "average"
+```
 
 
 Cascaded nested switch example:
 
-    std::string country = "Spain";
-    std::string city = "Granada";
+``` C++
+std::string country = "Spain";
+std::string city = "Granada";
 
-    SWITCH_STATIC( country )
-      CASE( "Nicaragua" )
-        SWITCH_STATIC( city )
-          CASE("Granada") FALL
-          CASE("Managua") return "-06:00"; BREAK
-        END
-        BREAK
-      CASE( "Spain" )
-        SWITCH_STATIC( city )
-          CASE("Granada") FALL
-          CASE("Madrid") return "+01:00"; BREAK
-        END
+SWITCH_STATIC( country )
+  CASE( "Nicaragua" )
+    SWITCH_STATIC( city )
+      CASE("Granada") FALL
+      CASE("Managua") return "-06:00"; BREAK
     END
+    BREAK
+  CASE( "Spain" )
+    SWITCH_STATIC( city )
+      CASE("Granada") FALL
+      CASE("Madrid") return "+01:00"; BREAK
+    END
+END
 
-    // the result will be: "+01:00"
+// the result will be: "+01:00"
+```
 
 
 Complex object example:
 
-    std::pair<char,int> val('a',1);
+``` C++
+std::pair<char,int> val('a',1);
 
-    SWITCH(val)
-      CASE( (std::make_pair('a',1)) ) return "first"; BREAK
-      CASE( (std::make_pair('b',2)) ) return "second"; BREAK
-    END
+SWITCH(val)
+  CASE( (std::make_pair('a',1)) ) return "first"; BREAK
+  CASE( (std::make_pair('b',2)) ) return "second"; BREAK
+END
 
-    // the result will be: "first"
+// the result will be: "first"
+```
 
 
 Be carefull with commas. The implementation is macros based.
 All expressins with commas in macroses must be in parentheses.
 So where you need code like this:
 
-    CASE( std::make_pair(first,second) )
+``` C++
+CASE( std::make_pair(first,second) )
+```
 
 write instead:
 
-    CASE( ( std::make_pair(first,second) ) )
+``` C++
+CASE( ( std::make_pair(first,second) ) )
+```
 
 
 The quick C++ mode
@@ -135,8 +153,10 @@ be ignored and switch will work with values passed at first execution.
 
 To enable quick mode define macro `SWITCH_QUICK` before include header:
 
-    #define SWITCH_QUICK
-    #include <switch>
+``` C++
+#define SWITCH_QUICK
+#include <switch>
+```
 
 This macro will be ignored if you have not c++11 or newer compiler or that 
 features is not enabled. The quick implementation will not be enabled for
@@ -145,20 +165,23 @@ that cases. The default (non quick) mode will be enabled instead.
 The return statement is not allowed in quick mode.
 Use helper variable instead:
 
-    std::string val = "spring";
-    std::string result;
+``` C++
+std::string val = "spring";
+std::string result;
 
-    SWITCH(val)
-      CASE("winter") result = "cold"; BREAK
-      CASE("summer") result = "heat"; BREAK
-      CASE("spring") FALL
-      CASE("autumn") result = "average"; BREAK
-      DEFAULT result = "not a season";
-    END
+SWITCH(val)
+  CASE("winter") result = "cold"; BREAK
+  CASE("summer") result = "heat"; BREAK
+  CASE("spring") FALL
+  CASE("autumn") result = "average"; BREAK
+  DEFAULT result = "not a season";
+END
 
-    return result;
+return result;
 
-    // the result will be: "average"
+// the result will be: "average"
+```
+
 
 The dynamic quick C++ mode
 --------------------------
@@ -185,13 +208,17 @@ The C implementation support only C strings ( were type is `char*` )
 
 Include switch in source file
 
-    #include <switch.h>
+``` C++
+#include <switch.h>
+```
 
 One of your C source fil must define macro `SWITCH_IMPL` before
 include `switch.h`  header file like this:
 
-    #define SWITCH_IMPL
-    #include <switch.h>
+``` C++
+#define SWITCH_IMPL
+#include <switch.h>
+```
 
 The switch is enough simple to make library. So this is not library.
 But the C implementation need to add instance of code. Implementation
@@ -200,15 +227,17 @@ must be included only once to avoid conflict of external symbols.
 
 Example:
 
-    const char[] val = "white";
+``` C++
+const char[] val = "white";
 
-    SWITCH(val)
-      CASE("black") return 0; BREAK
-      CASE("white") return 1; BREAK
-      DEFAULT exit(1);
-    END
+SWITCH(val)
+  CASE("black") return 0; BREAK
+  CASE("white") return 1; BREAK
+  DEFAULT exit(1);
+END
 
-    // the result will be: 1
+// the result will be: 1
+```
 
 
 License
