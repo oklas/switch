@@ -326,7 +326,6 @@ int SWITCH__D_A_T_A_transition(
 
 
 #ifdef SWITCH_IMPL
-inline
 int SWITCH__D_A_T_A_transition(
   SWITCH__D_A_T_A* data, int fall, const char*cnst, int ndeflt) {
 
