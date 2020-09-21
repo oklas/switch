@@ -45,7 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef __cplusplus
 
 
-#if ( __cplusplus >= 201103L || defined(SWITCH_NG) )
+#if ( __cplusplus >= 201103L || _MSC_VER || defined(SWITCH_NG) )
 #define SWITCH_DECLTYPE decltype
 #else
 #define SWITCH_DECLTYPE typeof
